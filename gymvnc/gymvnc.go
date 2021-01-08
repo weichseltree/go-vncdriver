@@ -125,7 +125,7 @@ func NewVNCSession(name string, c VNCSessionConfig) *VNCSession {
 		name:               name,
 		mgr:                NewSessionMgr(),
 		backUpdated:        true,
-		deferredUpdatesMax: 60,
+		deferredUpdatesMax: 6000,
 		updated:            sync.NewCond(lock),
 		config:             c,
 
@@ -275,7 +275,7 @@ func (c *VNCSession) Flip() (*Screen, []*vncclient.FramebufferUpdateMessage) {
 			if c.pauseUpdates {
 				// Restart the framebuffer request cycle
 				c.pauseUpdates = false
-				log.Infof("[%s] resuming updates", c.label)
+				//log.Infof("[%s] resuming updates", c.label)
 				err := c.requestUpdate()
 				if err != nil {
 					select {
@@ -371,7 +371,7 @@ func (c *VNCSession) maintainFrameBuffer(updates chan *vncclient.FramebufferUpda
 			c.deferredUpdates = append(c.deferredUpdates, update)
 
 			if len(c.deferredUpdates) >= c.deferredUpdatesMax && !c.pauseUpdates {
-				log.Infof("[%s] update queue max of %d reached; pausing further updates", c.label, c.deferredUpdatesMax)
+				//log.Infof("[%s] update queue max of %d reached; pausing further updates", c.label, c.deferredUpdatesMax)
 				c.pauseUpdates = true
 			}
 
@@ -414,7 +414,7 @@ func (c *VNCSession) requestUpdate() error {
 }
 
 func (c *VNCSession) connect(updates chan *vncclient.FramebufferUpdateMessage) error {
-	log.Infof("[%s] opening connection to VNC server", c.label)
+	//log.Infof("[%s] opening connection to VNC server", c.label)
 
 	errorCh := make(chan error, 1)
 	serverMessageCh := make(chan vncclient.ServerMessage)
@@ -547,7 +547,7 @@ func (c *VNCSession) connect(updates chan *vncclient.FramebufferUpdateMessage) e
 		// Conn will be closed by our earlier defer
 		return errors.Errorf("[%s] VNCSession object was closed before connection was established", c.label)
 	}
-	log.Infof("[%s] connection established", c.label)
+	//log.Infof("[%s] connection established", c.label)
 	c.lock.Unlock()
 
 	// Spin up a screenbuffer thread
